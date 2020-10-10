@@ -1,10 +1,7 @@
 from django.views import generic
 from braces.views import LoginRequiredMixin
 
-try:
-    from django.urls import reverse
-except ImportError:
-    from django.core.urlresolvers import reverse
+
 from . import models
 from . import utils
 from django.shortcuts import get_object_or_404
@@ -17,10 +14,6 @@ class DialogListView(LoginRequiredMixin, generic.ListView):
     template_name = 'django_private_chat/dialogs.html'
     model = models.Dialog
     ordering = 'modified'
-
-    def get_queryset(self):
-        dialogs = models.Dialog.objects.filter(Q(owner=self.request.user) | Q(opponent=self.request.user))
-        return dialogs
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
@@ -45,3 +38,8 @@ class DialogListView(LoginRequiredMixin, generic.ListView):
             settings.CHAT_WS_SERVER_PORT,
         )
         return context
+    def get_queryset(self):
+        dialogs = models.Dialog.objects.filter(Q(owner=self.request.user) | Q(opponent=self.request.user))
+        return dialogs
+
+
